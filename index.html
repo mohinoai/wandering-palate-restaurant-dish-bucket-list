@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Wandering Palate — dish bucket list</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" />
+	<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+	<a class="skip-link" href="#main-content">Skip to content</a>
+
+	<header class="masthead">
+		<div class="shell">
+			<p class="masthead__eyebrow">Kept in a stained notebook since forever</p>
+			<h1 class="masthead__title">Wandering Palate</h1>
+			<p class="masthead__tagline">
+				Not restaurants — <em>dishes</em>. The exact plate someone swore you had to order.
+			</p>
+			<p class="tally" aria-live="polite">
+				<span class="tally__pill"><b id="tally-total">0</b> on the list</span>
+				<span class="tally__pill tally__pill--done"><b id="tally-tried">0</b> tried</span>
+			</p>
+		</div>
+	</header>
+
+	<main id="main-content" class="shell">
+		<p id="live-region" class="sr-only" aria-live="polite"></p>
+		<p id="load-error" class="error error--load" role="alert"></p>
+
+		<div class="columns">
+			<section class="panel paper paper--form" aria-labelledby="add-heading">
+				<h2 id="add-heading" class="panel__title">Add a dish</h2>
+				<form id="dish-form" novalidate>
+					<div class="field">
+						<label for="f-name">Dish name</label>
+						<input id="f-name" name="name" type="text" aria-describedby="e-name" />
+						<p class="error" id="e-name"></p>
+					</div>
+					<div class="field">
+						<label for="f-restaurant">Restaurant name</label>
+						<input id="f-restaurant" name="restaurant" type="text" autocomplete="organization" aria-describedby="e-restaurant" />
+						<p class="error" id="e-restaurant"></p>
+					</div>
+					<div class="field">
+						<label for="f-area">Neighborhood or city</label>
+						<input id="f-area" name="area" type="text" autocomplete="address-level2" aria-describedby="e-area" />
+						<p class="error" id="e-area"></p>
+					</div>
+					<div class="field">
+						<label for="f-cuisine">Cuisine tag</label>
+						<input id="f-cuisine" name="cuisine" type="text" placeholder="Japanese, Ethiopian, Tex-Mex…" aria-describedby="e-cuisine" />
+						<p class="error" id="e-cuisine"></p>
+					</div>
+					<div class="field">
+						<label for="f-note">Why you want it</label>
+						<textarea id="f-note" name="note" rows="3" aria-describedby="e-note"></textarea>
+						<p class="error" id="e-note"></p>
+					</div>
+					<button class="btn btn--primary" type="submit">Add to bucket list</button>
+					<p class="error" id="form-error" role="alert"></p>
+				</form>
+			</section>
+
+			<div class="stack">
+				<section class="panel paper paper--filter" aria-labelledby="filter-heading">
+					<h2 id="filter-heading" class="panel__title">Narrow it down</h2>
+					<div class="controls">
+						<div class="field field--inline">
+							<label for="filter-cuisine">Cuisine</label>
+							<select id="filter-cuisine">
+								<option value="">All cuisines</option>
+							</select>
+						</div>
+						<fieldset class="segmented">
+							<legend>Status</legend>
+							<div class="segmented__row">
+								<input type="radio" id="status-all" name="status" value="all" checked />
+								<label for="status-all">All</label>
+								<input type="radio" id="status-untried" name="status" value="untried" />
+								<label for="status-untried">Untried</label>
+								<input type="radio" id="status-tried" name="status" value="tried" />
+								<label for="status-tried">Tried</label>
+							</div>
+						</fieldset>
+						<div class="field field--inline">
+							<label for="sort-order">Sort</label>
+							<select id="sort-order">
+								<option value="newest">Newest first</option>
+								<option value="oldest">Oldest first</option>
+							</select>
+						</div>
+					</div>
+				</section>
+
+				<section class="panel" aria-labelledby="list-heading">
+					<h2 id="list-heading" class="panel__title">The bucket list</h2>
+					<ul id="dish-list" class="grid" aria-busy="true"></ul>
+
+					<div id="empty-state" class="blank paper" hidden>
+						<h3 class="blank__title">Nothing on the list yet</h3>
+						<p>Next time someone raves about a plate of something, write it down here before you forget.</p>
+						<button class="btn btn--ghost" type="button" id="cta-add">Add your first dish</button>
+					</div>
+
+					<div id="filter-blank" class="blank paper" hidden>
+						<h3 class="blank__title">No dish matches that</h3>
+						<p id="filter-blank-detail"></p>
+						<button class="btn btn--ghost" type="button" id="reset-filters">Reset filters</button>
+					</div>
+				</section>
+			</div>
+		</div>
+	</main>
+
+	<template id="dish-template">
+		<li class="dish">
+			<article class="dish__paper paper">
+				<p class="dish__tag" data-cuisine></p>
+				<h3 class="dish__name" data-name></h3>
+				<p class="dish__where">
+					<span data-restaurant></span> <span aria-hidden="true">·</span> <span data-area></span>
+				</p>
+				<p class="dish__note" data-note></p>
+				<p class="dish__stamp" data-stamp hidden>Tried it</p>
+				<div class="dish__foot">
+					<label class="switch">
+						<input type="checkbox" class="switch__input" data-toggle />
+						<span class="switch__track" aria-hidden="true"><span class="switch__knob"></span></span>
+						<span class="switch__label">Tried it?</span>
+					</label>
+					<time class="dish__date" data-date></time>
+				</div>
+				<p class="error" data-error role="alert"></p>
+			</article>
+		</li>
+	</template>
+
+	<template id="skeleton-template">
+		<li class="dish dish--ghost" aria-hidden="true">
+			<div class="dish__paper paper">
+				<span class="shim shim--tag"></span>
+				<span class="shim shim--name"></span>
+				<span class="shim shim--where"></span>
+				<span class="shim shim--note"></span>
+				<span class="shim shim--foot"></span>
+			</div>
+		</li>
+	</template>
+
+	<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
